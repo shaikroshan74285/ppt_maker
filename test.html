@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Tester - Prabhas PPT Maker</title>
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+    <script src="processing.js?v=3"></script>
+    <script src="tags.js?v=3"></script>
+    <script src="templates.js?v=3"></script>
+
+    <!-- Templates -->
+    <script src="temp1.js?v=3"></script>
+    <script src="temp2.js?v=3"></script>
+    <script src="temp3.js?v=3"></script>
+    <script src="temp4.js?v=3"></script>
+    <script src="temp5.js?v=3"></script>
+    <script src="temp6.js?v=3"></script>
+    <script src="temp7.js?v=3"></script>
+    <script src="temp8.js?v=3"></script>
+    <script src="temp9.js?v=3"></script>
+    <script src="temp10.js?v=3"></script>
+    <script src="temp11.js?v=3"></script>
+    <script src="temp12.js?v=3"></script>
+    <script src="temp13.js?v=3"></script>
+    <script src="temp14.js?v=3"></script>
+    <script src="temp15.js?v=3"></script>
+    <script src="temp16.js?v=3"></script>
+    <script src="temp17.js?v=3"></script>
+    <script src="temp18.js?v=3"></script>
+    <script src="temp19.js?v=3"></script>
+    <script src="temp20.js?v=3"></script>
+    <script src="temp21.js?v=3"></script>
+    <script src="temp22.js?v=3"></script>
+    <script src="temp23.js?v=3"></script>
+    <script src="temp24.js?v=3"></script>
+    <script src="temp25.js?v=3"></script>
+    <script src="temp26.js?v=3"></script>
+    <script src="temp27.js?v=3"></script>
+    <script src="temp28.js?v=3"></script>
+    <script src="temp29.js?v=3"></script>
+    <script src="temp30.js?v=3"></script>
+    <script src="temp31.js?v=3"></script>
+    <script src="temp32.js?v=3"></script>
+    <script src="temp33.js?v=3"></script>
+    <script src="temp34.js?v=3"></script>
+    <script src="temp35.js?v=3"></script>
+    <script src="temp36.js?v=3"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #0f172a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            margin: 0;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        textarea {
+            height: 200px;
+            resize: vertical;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4f46e5, #9333ea);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
+        }
+
+        .status {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+            color: #10b981;
+        }
+
+        .back-link {
+            margin-top: 20px;
+            color: #6366f1;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Template Design Tester</h1>
+
+        <div class="form-group">
+            <label for="templateSelect">Select Template to Test:</label>
+            <select id="templateSelect">
+                <!-- Will be populated by JS -->
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="slideContent">Slide Content (Slide 1: Title...):</label>
+            <textarea id="slideContent" placeholder="🟢 Slide 1: Introduction
+- Point one
+- Point two
+- Point three"></textarea>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-bottom: 25px;">
+            <input type="checkbox" id="ignoreAssets" style="width: 20px; height: 20px; cursor: pointer;">
+            <label for="ignoreAssets" style="margin-bottom: 0; cursor: pointer;">Ignore Images/Icons (Design Only
+                Mode)</label>
+        </div>
+
+        <button class="btn" id="testBtn">Generate Test PPT</button>
+
+        <div class="status" id="status"></div>
+    </div>
+
+    <a href="ppt.html" class="back-link">← Back to Main PPT Maker</a>
+
+    <script>
+        // Populate dropdown from registry
+        const select = document.getElementById('templateSelect');
+
+        // Add Auto option first
+        const autoOption = document.createElement('option');
+        autoOption.value = 'AUTO';
+        autoOption.textContent = '✨ Auto Select (Best fit)';
+        select.appendChild(autoOption);
+
+        window.TEMPLATE_LOCATIONS.forEach(t => {
+            const option = document.createElement('option');
+            option.value = t.name;
+            option.textContent = `Template ${t.id}: ${t.name.replace(/_/g, ' ')}`;
+            select.appendChild(option);
+        });
+
+        async function validateImageUrl(url) {
+            if (!url) return false;
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(false);
+                img.src = url;
+            });
+        }
+
+        document.getElementById('testBtn').onclick = async function () {
+            const templateSelection = document.getElementById('templateSelect').value;
+            const text = document.getElementById('slideContent').value;
+            const status = document.getElementById('status');
+            const ignoreAssets = document.getElementById('ignoreAssets').checked;
+
+            if (!text.trim()) {
+                alert('Please enter some content!');
+                return;
+            }
+
+            try {
+                status.textContent = "Processing...";
+                status.style.color = "#10b981";
+
+                // Process content
+                const data = window.processContent(text);
+                if (data.error) throw new Error(data.error);
+
+                status.textContent = (ignoreAssets ? "Generating (Design Only mode)..." : "Validating assets and generating...");
+
+                const pptx = new PptxGenJS();
+                pptx.layout = 'LAYOUT_16x9';
+                if (window.resetColors) window.resetColors();
+                if (window.resetAssetTracking) window.resetAssetTracking();
+
+                // We need pickTemplate from ppt.js or redefine it if we want "Auto"
+                // For simplicity, we'll redefine a simple version here or use the suggested_template from data
+
+                for (let i = 0; i < data.slides.length; i++) {
+                    const slide = data.slides[i];
+
+                    // Determine which template to use
+                    let templateName = templateSelection;
+                    if (templateSelection === 'AUTO') {
+                        templateName = slide.suggested_template;
+                    }
+
+                    const template = window.AI_TEMPLATES[templateName];
+                    if (!template) {
+                        console.warn("Template not found, falling back to bullets:", templateName);
+                        templateName = 'IMAGE_LEFT_BULLETS_RIGHT';
+                    }
+
+                    // Graceful asset handling with validation
+                    let bg = null;
+                    let icons = [];
+
+                    if (!ignoreAssets) {
+                        if (window.getBackgroundImage) {
+                            const rawBg = window.getBackgroundImage(slide.keywords || []);
+                            if (rawBg && await validateImageUrl(rawBg.path)) {
+                                bg = rawBg;
+                            }
+                        }
+
+                        if (window.getIcons) {
+                            const rawIcons = window.getIcons(slide.keywords || [], 4);
+                            for (const icon of rawIcons) {
+                                if (await validateImageUrl(icon.path)) {
+                                    icons.push(icon);
+                                }
+                            }
+                        }
+                    }
+
+                    // Build with the actual template object
+                    window.AI_TEMPLATES[templateName].build(pptx, slide, { bg, icons });
+                }
+
+                const blob = await pptx.write({ outputType: 'blob' });
+
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Test_${templateSelection === 'AUTO' ? 'Auto' : templateSelection}.pptx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                status.textContent = "✅ PPT Generated successfully!";
+            } catch (err) {
+                console.error(err);
+                status.textContent = "❌ Error: " + err.message;
+                status.style.color = "#ef4444";
+            }
+        };
+    </script>
+</body>
+
+</html>

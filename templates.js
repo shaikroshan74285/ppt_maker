@@ -1,442 +1,107 @@
 /************************************************************
-  THEMES
-*************************************************************/
-window.PPT_THEMES = {
-  loan_lms: {
-    name: "Loan / LMS",
-    fontFace: "Calibri",
-    colors: {
-      black: "111827",
-      blue: "4472C4",
-      lightBox: "EEF2F7",
-      orange: "F57C00",
-      card: "F3F4F6",
-      white: "FFFFFF",
-      gray: "6B7280"
-    }
-  }
-};
+ * PRABHAS PPT MAKER - Professional Template Engine
+ * Clean, modern slide designs with consistent styling
+ ************************************************************/
 
-/************************************************************
-  ✅ TEMPLATES registry (ADD NEW templates here)
-*************************************************************/
-window.TEMPLATES = {
-  // 1) image-1 : Title + 1-point slides
-  TITLE_PHOTO_BAR: {
-    id: "TITLE_PHOTO_BAR",
-    name: "Title Photo + Bottom White Bar",
-    build: tpl_titlePhotoBar
-  },
+// ========== COLOR PALETTES ==========
+// Professional color combinations
+const COLOR_PALETTES = [
+  { primary: "1E40AF", secondary: "3B82F6", accent: "93C5FD", light: "DBEAFE", dark: "1E3A8A" }, // Blue
+  { primary: "047857", secondary: "10B981", accent: "6EE7B7", light: "D1FAE5", dark: "064E3B" }, // Emerald
+  { primary: "7C3AED", secondary: "8B5CF6", accent: "C4B5FD", light: "EDE9FE", dark: "5B21B6" }, // Purple
+  { primary: "DC2626", secondary: "EF4444", accent: "FCA5A5", light: "FEE2E2", dark: "991B1B" }, // Red
+  { primary: "D97706", secondary: "F59E0B", accent: "FCD34D", light: "FEF3C7", dark: "92400E" }, // Amber
+  { primary: "0891B2", secondary: "06B6D4", accent: "67E8F9", light: "CFFAFE", dark: "155E75" }, // Cyan
+  { primary: "BE185D", secondary: "EC4899", accent: "F9A8D4", light: "FCE7F3", dark: "831843" }, // Pink
+  { primary: "4F46E5", secondary: "6366F1", accent: "A5B4FC", light: "E0E7FF", dark: "3730A3" }, // Indigo
+];
 
-  // 2) image-2 : <=3 points but long sentences
-  LONG_3POINTS: {
-    id: "LONG_3POINTS",
-    name: "3 points long sentences layout",
-    build: tpl_long3Points
-  },
+let paletteIndex = 0;
 
-  // 3) image-3 : <=5 points and each <=5 words
-  THREE_FEATURE_BLOCKS: {
-    id: "THREE_FEATURE_BLOCKS",
-    name: "3 Feature blocks",
-    build: tpl_threeFeatureBlocks
-  },
-
-  // 4) image-4 : 4-6 normal single line bullets
-  FEATURE_CARDS_RIGHT: {
-    id: "FEATURE_CARDS_RIGHT",
-    name: "Feature cards right",
-    build: tpl_featureCardsRight
-  },
-
-  // 5) image-5 : medium/heavy bullets normal
-  IMAGE_LEFT_TEXT_RIGHT: {
-    id: "IMAGE_LEFT_TEXT_RIGHT",
-    name: "Image left text right",
-    build: tpl_imageLeftTextRight
-  },
-
-  // 6) image-6 : >5 points each <=5 words
-  REQUIREMENTS_GRID_RIGHT: {
-    id: "REQUIREMENTS_GRID_RIGHT",
-    name: "Requirement grid right",
-    build: tpl_requirementsGridRight
-  },
-
-  // 7) image-7 : heavy paragraph slides
-  OVERLAY_PARAGRAPH: {
-    id: "OVERLAY_PARAGRAPH",
-    name: "Full bg overlay paragraph",
-    build: tpl_overlayParagraph
-  },
-
-  // 8) image-8 : points >5 words and >3 points
-  APPLY_LOAN_LEFT_IMAGE: {
-    id: "APPLY_LOAN_LEFT_IMAGE",
-    name: "Apply loan left image",
-    build: tpl_applyLoanLeftImage
-  },
-
-  // 9) image-9 : no rules random
-  PROCESS_STACK: {
-    id: "PROCESS_STACK",
-    name: "Process stack",
-    build: tpl_processStack
-  }
-};
-
-/************************************************************
-  TEMPLATE 1 (Image-1)
-*************************************************************/
-function tpl_titlePhotoBar(pptx, theme, slide, assets) {
-  const s = pptx.addSlide();
-
-  if (assets?.bg) s.addImage({ data: assets.bg, x: 0, y: 0, w: 10, h: 3.35 });
-  else s.background = { fill: theme.colors.white };
-
-  s.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 3.35, w: 10, h: 2.275,
-    fill: { color: theme.colors.white },
-    line: { color: theme.colors.white }
-  });
-
-  s.addText(slide.title || "", {
-    x: 0.7, y: 4.05, w: 8.0, h: 0.8,
-    fontFace: theme.fontFace, fontSize: 34,
-    bold: true, color: theme.colors.black
-  });
-
-  const tagline = slide.items?.[0] || slide.subtitle || "";
-  if (tagline) {
-    s.addText(tagline, {
-      x: 6.8, y: 4.25, w: 3.0, h: 0.5,
-      fontFace: theme.fontFace,
-      fontSize: 14,
-      color: theme.colors.gray,
-      align: "right"
-    });
-  }
-
-  if (slide.footerLines?.length) {
-    s.addText(slide.footerLines.join("\n"), {
-      x: 0.75, y: 4.75, w: 8.5, h: 0.8,
-      fontFace: theme.fontFace,
-      fontSize: 12,
-      color: theme.colors.gray
-    });
-  }
+function getNextPalette() {
+  const palette = COLOR_PALETTES[paletteIndex % COLOR_PALETTES.length];
+  paletteIndex++;
+  return palette;
 }
 
-/************************************************************
-  TEMPLATE 2 (Image-2) <=3 points long sentences
-*************************************************************/
-function tpl_long3Points(pptx, theme, slide, assets) {
-  const s = pptx.addSlide();
-  s.background = { fill: theme.colors.white };
-
-  // left title
-  s.addText(slide.title || "", {
-    x: 0.8, y: 0.7, w: 4.7, h: 0.8,
-    fontFace: theme.fontFace, fontSize: 30,
-    bold: true, color: theme.colors.black
-  });
-
-  // right image
-  if (assets?.bg) {
-    s.addImage({ data: assets.bg, x: 5.3, y: 0, w: 4.7, h: 5.625 });
-  } else {
-    s.addShape(pptx.ShapeType.rect, {
-      x: 5.3, y: 0, w: 4.7, h: 5.625,
-      fill: { color: theme.colors.card }, line: { color: theme.colors.card }
-    });
-  }
-
-  // bullets
-  const bullets = (slide.items || []).slice(0, 3).join("\n");
-  s.addText(bullets, {
-    x: 0.9, y: 1.7, w: 4.3, h: 3.6,
-    fontFace: theme.fontFace,
-    fontSize: 17,
-    color: theme.colors.black,
-    bullet: true,
-    paraSpaceAfter: 10
-  });
+function resetColors() {
+  paletteIndex = Math.floor(Math.random() * COLOR_PALETTES.length);
 }
 
-/************************************************************
-  TEMPLATE 3 (Image-3) Feature Blocks
-*************************************************************/
-function tpl_threeFeatureBlocks(pptx, theme, slide) {
-  const s = pptx.addSlide();
-  s.background = { fill: theme.colors.white };
+// Random color generator for dynamic template colors
+// Rainbow-style distinct colors (no similar shades)
+const RAINBOW_COLORS = [
+  "3B82F6", // Blue
+  "10B981", // Green
+  "F59E0B", // Orange/Amber
+  "06B6D4", // Cyan/Teal
+  "8B5CF6", // Purple
+  "EF4444", // Red
+  "84CC16", // Lime/Yellow-Green
+  "EC4899", // Pink
+  "14B8A6", // Teal
+  "F97316"  // Orange
+];
 
-  s.addText(slide.title || "", {
-    x: 0.7, y: 0.6, w: 9.0, h: 0.8,
-    fontFace: theme.fontFace,
-    fontSize: 30, bold: true,
-    align: "center", color: theme.colors.black
-  });
+let lastColorIndex = -1;
 
-  const items = (slide.items || []).slice(0, 3);
-  const boxW = 2.7, boxH = 1.35;
-  const y = 2.6;
-  const xs = [1.0, 3.65, 6.3];
+function randColor() {
+  // Get a random color that is different from the last one
+  let newIndex;
+  do {
+    newIndex = Math.floor(Math.random() * RAINBOW_COLORS.length);
+  } while (newIndex === lastColorIndex && RAINBOW_COLORS.length > 1);
 
-  items.forEach((txt, i) => {
-    s.addShape(pptx.ShapeType.roundRect, {
-      x: xs[i] - 0.4, y: y - 0.35,
-      w: boxW, h: boxH,
-      fill: { color: theme.colors.blue },
-      line: { color: theme.colors.blue }
-    });
-
-    s.addShape(pptx.ShapeType.roundRect, {
-      x: xs[i], y,
-      w: boxW, h: boxH,
-      fill: { color: theme.colors.lightBox },
-      line: { color: theme.colors.blue }
-    });
-
-    s.addText(txt, {
-      x: xs[i] + 0.15,
-      y: y + 0.25,
-      w: boxW - 0.3, h: boxH - 0.3,
-      fontFace: theme.fontFace,
-      fontSize: 18,
-      align: "center", valign: "mid",
-      color: theme.colors.black
-    });
-  });
+  lastColorIndex = newIndex;
+  return RAINBOW_COLORS[newIndex];
 }
 
-/************************************************************
-  TEMPLATE 4 (Image-4) Feature Cards right
-*************************************************************/
-function tpl_featureCardsRight(pptx, theme, slide, assets) {
-  const s = pptx.addSlide();
-  s.background = { fill: theme.colors.white };
+// Export for global access
+window.resetColors = resetColors;
+window.randColor = randColor;
+window.getNextPalette = getNextPalette;
 
-  s.addText(slide.title || "", {
-    x: 0.7, y: 1.0, w: 3.6, h: 2.5,
-    fontFace: theme.fontFace,
-    fontSize: 32, bold: true,
-    color: theme.colors.black
-  });
+// ========== TEMPLATE REGISTRY ==========
+window.AI_TEMPLATES = {};
 
-  const items = (slide.items || []).slice(0, 3);
-  let y = 0.8;
+// Template Locations (Metadata for reference)
+window.TEMPLATE_LOCATIONS = [
+  { id: 1, name: "HERO_IMAGE_TITLE", file: "temp1.js" },
+  { id: 2, name: "LEFT_TITLE_FEATURE_CARDS", file: "temp2.js" },
+  { id: 3, name: "PROCESS_VERTICAL_STACK", file: "temp3.js" },
+  { id: 4, name: "IMAGE_LEFT_BULLETS_RIGHT", file: "temp4.js" },
+  { id: 5, name: "GRID_REQUIREMENTS", file: "temp5.js" },
+  { id: 6, name: "FULL_BG_TEXT_OVERLAY", file: "temp6.js" },
+  { id: 7, name: "VALUE_CHAIN_FLOW", file: "temp7.js" },
+  { id: 8, name: "TEXT_LEFT_IMAGE_RIGHT", file: "temp8.js" },
+  { id: 9, name: "SOLUTION_CARDS_GRID", file: "temp9.js" },
+  { id: 10, name: "BLOG_CARDS_LAYOUT", file: "temp10.js" },
+  { id: 11, name: "INSTALLATION_STEPS_CARDS", file: "temp11.js" },
+  { id: 12, name: "ZIGZAG_PROCESS_STEPS", file: "temp12.js" },
+  { id: 13, name: "TEXT_LEFT_IMAGE_RIGHT_ALT", file: "temp13.js" },
+  { id: 14, name: "TITLE_SPLIT_BAND", file: "temp14.js" },
+  { id: 15, name: "TITLE_MINIMAL_ACCENT", file: "temp15.js" },
+  { id: 16, name: "TITLE_DUOTONE_FRAME", file: "temp16.js" },
+  { id: 17, name: "CONCLUSION_SINGLE_SPOTLIGHT", file: "temp17.js" },
+  { id: 18, name: "CONCLUSION_SINGLE_QUOTE", file: "temp18.js" },
+  { id: 19, name: "CONCLUSION_SINGLE_METRIC", file: "temp19.js" },
+  { id: 20, name: "CONCLUSION_MULTI_CHECKLIST", file: "temp20.js" },
+  { id: 21, name: "CONCLUSION_MULTI_PILLARS", file: "temp21.js" },
+  { id: 22, name: "CONCLUSION_MULTI_SUMMARY_GRID", file: "temp22.js" },
+  { id: 23, name: "DIFFERENCE_SPLIT_CHEVRON", file: "temp23.js" },
+  { id: 24, name: "PROS_CONS_BALANCE_CARDS", file: "temp24.js" },
+  { id: 25, name: "ADV_DISADV_TIMELINE", file: "temp25.js" },
+  { id: 26, name: "DIFFERENCE_DUAL_COLUMN_BANDS", file: "temp26.js" },
+  { id: 27, name: "SINGLELINE_FOCUS_QUOTE", file: "temp27.js" },
+  { id: 28, name: "SINGLELINE_CENTER_STATEMENT", file: "temp28.js" },
+  { id: 29, name: "SINGLELINE_BANNER_IMAGE", file: "temp29.js" },
+  { id: 30, name: "SINGLELINE_ACCENT_BLOCK", file: "temp30.js" },
+  { id: 31, name: "SINGLELINE_MINIMAL_FRAME", file: "temp31.js" },
+  { id: 32, name: "MULTIPOINT_NUMBERED_PATH", file: "temp32.js" },
+  { id: 33, name: "MULTIPOINT_ICON_GRID", file: "temp33.js" },
+  { id: 34, name: "MULTIPOINT_STAGGERED_CARDS", file: "temp34.js" },
+  { id: 35, name: "MULTIPOINT_LEFT_RAIL_LIST", file: "temp35.js" },
+  { id: 36, name: "MULTIPOINT_TWO_COLUMN_BULLETS", file: "temp36.js" }
+];
 
-  items.forEach((txt, i) => {
-    s.addShape(pptx.ShapeType.roundRect, {
-      x: 4.3, y, w: 5.4, h: 1.2,
-      fill: { color: theme.colors.card },
-      line: { color: theme.colors.card }
-    });
-
-    const icon = assets?.icons?.[i];
-    if (icon) s.addImage({ data: icon, x: 4.6, y: y + 0.28, w: 0.55, h: 0.55 });
-
-    s.addText(txt, {
-      x: 5.3, y: y + 0.32, w: 4.2, h: 0.6,
-      fontFace: theme.fontFace,
-      fontSize: 18,
-      color: theme.colors.black
-    });
-
-    y += 1.55;
-  });
-}
-
-/************************************************************
-  TEMPLATE 5 (Image-5) Normal Image Left + Text Right
-*************************************************************/
-function tpl_imageLeftTextRight(pptx, theme, slide, assets) {
-  const s = pptx.addSlide();
-  s.background = { fill: theme.colors.white };
-
-  if (assets?.bg) s.addImage({ data: assets.bg, x: 0, y: 0, w: 5, h: 5.625 });
-  else s.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 5, h: 5.625, fill: { color: theme.colors.card } });
-
-  s.addShape(pptx.ShapeType.rect, {
-    x: 5, y: 0, w: 5, h: 5.625,
-    fill: { color: theme.colors.white }, line: { color: theme.colors.white }
-  });
-
-  s.addText(slide.title || "", {
-    x: 5.5, y: 0.9, w: 4.2, h: 0.7,
-    fontFace: theme.fontFace,
-    fontSize: 30, bold: true,
-    color: theme.colors.black
-  });
-
-  s.addText((slide.items || []).slice(0, 10).join("\n"), {
-    x: 5.5, y: 1.8, w: 4.2, h: 3.6,
-    fontFace: theme.fontFace,
-    fontSize: 15,
-    color: theme.colors.black,
-    bullet: true,
-    paraSpaceAfter: 8
-  });
-}
-
-/************************************************************
-  TEMPLATE 6 (Image-6) Grid right
-*************************************************************/
-function tpl_requirementsGridRight(pptx, theme, slide) {
-  const s = pptx.addSlide();
-  s.background = { fill: theme.colors.white };
-
-  s.addText(slide.title || "", {
-    x: 0.8, y: 1.0, w: 3.2, h: 2.8,
-    fontFace: theme.fontFace,
-    fontSize: 34, bold: true,
-    color: theme.colors.black
-  });
-
-  const items = (slide.items || []).slice(0, 11);
-  const colors = ["F57C00", "9CA3AF", "D19A00", "5FA0E0", "6BAA3B"];
-
-  const startX = 4.1, startY = 0.9;
-  const boxW = 1.6, boxH = 0.86, gapX = 0.28, gapY = 0.22;
-
-  items.forEach((txt, idx) => {
-    const row = Math.floor(idx / 3);
-    const col = idx % 3;
-    const x = startX + col * (boxW + gapX);
-    const y = startY + row * (boxH + gapY);
-    const fill = colors[idx % colors.length];
-
-    s.addShape(pptx.ShapeType.rect, {
-      x, y, w: boxW, h: boxH,
-      fill: { color: fill },
-      line: { color: fill }
-    });
-
-    s.addText(txt, {
-      x: x + 0.08, y: y + 0.18,
-      w: boxW - 0.16, h: boxH - 0.12,
-      fontFace: theme.fontFace,
-      fontSize: 10,
-      color: "FFFFFF",
-      align: "center", valign: "mid"
-    });
-  });
-}
-
-/************************************************************
-  TEMPLATE 7 (Image-7) Paragraph overlay
-*************************************************************/
-function tpl_overlayParagraph(pptx, theme, slide, assets) {
-  const s = pptx.addSlide();
-
-  if (assets?.bg) s.addImage({ data: assets.bg, x: 0, y: 0, w: 10, h: 5.625 });
-  else s.background = { fill: theme.colors.card };
-
-  // white overlay card
-  s.addShape(pptx.ShapeType.roundRect, {
-    x: 0.5, y: 0.7, w: 6.3, h: 4.3,
-    fill: { color: "FFFFFF", transparency: 30 },
-    line: { color: "FFFFFF", transparency: 100 }
-  });
-
-  s.addText(slide.title || "", {
-    x: 0.9, y: 1.0, w: 5.7, h: 0.8,
-    fontFace: theme.fontFace,
-    fontSize: 34,
-    bold: true,
-    color: theme.colors.black
-  });
-
-  s.addText((slide.items || []).slice(0, 6).join("\n"), {
-    x: 1.0, y: 2.0, w: 5.6, h: 2.8,
-    fontFace: theme.fontFace,
-    fontSize: 16,
-    color: theme.colors.black,
-    bullet: true,
-    paraSpaceAfter: 8
-  });
-}
-
-/************************************************************
-  TEMPLATE 8 (Image-8) Apply loan layout
-  ✅ Image RIGHT, Text LEFT
-*************************************************************/
-function tpl_applyLoanLeftImage(pptx, theme, slide, assets) {
-  const s = pptx.addSlide();
-
-  // ✅ Right side image
-  if (assets?.bg) {
-    s.addImage({ data: assets.bg, x: 5.0, y: 0, w: 5.0, h: 5.625 });
-  } else {
-    s.addShape(pptx.ShapeType.rect, {
-      x: 5.0, y: 0, w: 5.0, h: 5.625,
-      fill: { color: theme.colors.card },
-      line: { color: theme.colors.card }
-    });
-  }
-
-  // ✅ Left side white panel
-  s.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 0, w: 5.0, h: 5.625,
-    fill: { color: "FFFFFF" },
-    line: { color: "FFFFFF" }
-  });
-
-  // ✅ Title (LEFT)
-  s.addText(slide.title || "", {
-    x: 0.55, y: 0.8, w: 4.4, h: 0.8,
-    fontFace: theme.fontFace,
-    fontSize: 30,
-    bold: true,
-    color: theme.colors.black
-  });
-
-  // ✅ Bullets (LEFT)
-  s.addText((slide.items || []).slice(0, 12).join("\n"), {
-    x: 0.65, y: 1.65, w: 4.25, h: 3.8,
-    fontFace: theme.fontFace,
-    fontSize: 14,
-    color: theme.colors.black,
-    bullet: true,
-    paraSpaceAfter: 8
-  });
-}
-
-/************************************************************
-  TEMPLATE 9 (Image-9) Process stack
-*************************************************************/
-function tpl_processStack(pptx, theme, slide) {
-  const s = pptx.addSlide();
-  s.background = { fill: theme.colors.white };
-
-  s.addText(slide.title || "", {
-    x: 0.7, y: 0.8, w: 3.0, h: 1.5,
-    fontFace: theme.fontFace,
-    fontSize: 34, bold: true,
-    color: theme.colors.black
-  });
-
-  const items = (slide.items || []).slice(0, 6);
-  const colors = ["F57C00", "E07B39", "C67A5E", "B99090", "A9A9A9", "9CA3AF"];
-
-  let y = 0.6;
-  items.forEach((txt, i) => {
-    s.addShape(pptx.ShapeType.roundRect, {
-      x: 4.1, y, w: 5.5, h: 0.75,
-      fill: { color: colors[i % colors.length] },
-      line: { color: colors[i % colors.length] }
-    });
-
-    s.addText(txt, {
-      x: 4.35, y: y + 0.12, w: 5.0, h: 0.6,
-      fontFace: theme.fontFace,
-      fontSize: 22,
-      color: "FFFFFF"
-    });
-
-    y += 0.88;
-  });
-}
-
-window.TEMPLATES = TEMPLATES;
-window.PPT_THEMES = PPT_THEMES;
+console.log("Prabhas PPT Maker - Template Engine (Registry & Colors) loaded ✅");
