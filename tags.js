@@ -6,14 +6,7 @@ window.tagData = [
     "path": "assets/icons/3d_printing.png",
     "tags": [
       "3d printing",
-      "3D objects",
-      "additive manufacturing",
-      "3D modeling",
-      "3D design",
-      "3D prototyping",
-      "3D fabrication",
-      "3D printing technology",
-      "3D printing process"
+      "3D design"
     ]
   },
   {
@@ -45,10 +38,6 @@ window.tagData = [
       "neural networks",
       "deep learning",
       "cognitive computing",
-      "ai research",
-      "ai algorithms",
-      "electronic brain",
-      "intelligent systems",
       "ai technology"
     ]
   },
@@ -1547,7 +1536,6 @@ window.tagData = [
     "type": "icon",
     "path": "assets/icons/theater_drama.png",
     "tags": [
-      "theater_drama",
       "skit",
       "clubs",
       "fun"
@@ -1558,7 +1546,7 @@ window.tagData = [
     "type": "icon",
     "path": "assets/icons/thermal_engineering.png",
     "tags": [
-      "thermal_engineering",
+      "thermal engineering",
       "thermo meter",
       "temperature"
     ]
@@ -1581,8 +1569,7 @@ window.tagData = [
     "tags": [
       "travel",
       "international trade",
-      "trip",
-      "travelling"
+      "trip"
     ]
   },
   {
@@ -1590,7 +1577,6 @@ window.tagData = [
     "type": "icon",
     "path": "assets/icons/twitter_x.png",
     "tags": [
-      "twitter_x",
       "twitter",
       "X"
     ]
@@ -1600,8 +1586,9 @@ window.tagData = [
     "type": "icon",
     "path": "assets/icons/virtual_reality.png",
     "tags": [
-      "virtual_reality",
-      "future tech"
+      "virtual reality",
+      "future",
+      "VR"
     ]
   },
   {
@@ -1621,7 +1608,6 @@ window.tagData = [
       "visual_studio_code",
       "vs code",
       "IDE",
-      "development environment"
     ]
   },
   {
@@ -1667,7 +1653,7 @@ window.tagData = [
     "type": "icon",
     "path": "assets/icons/wifi_router.png",
     "tags": [
-      "wifi_router"
+      "router"
     ]
   },
   {
@@ -2320,11 +2306,15 @@ function tagMatchesKeyword(tag, keyword) {
   // Split into individual words for whole-word matching
   const tagWords = t.split(/[\s_-]+/).filter(w => w.length > 0);
   const keyWords = k.split(/[\s_-]+/).filter(w => w.length > 0);
-  // Helper: check if two words are a valid match (exact or prefix with min 4 chars)
+  // Helper: check if two words are a valid match (exact or strict prefix with min 5 chars and 80% length ratio)
   function wordsMatch(w1, w2) {
     if (w1 === w2) return true;
-    if (w1.length >= 4 && w2.length >= 4) {
-      return w1.startsWith(w2) || w2.startsWith(w1);
+    if (w1.length >= 5 && w2.length >= 5) {
+      const shorter = Math.min(w1.length, w2.length);
+      const longer = Math.max(w1.length, w2.length);
+      if (shorter / longer >= 0.8) {
+        return w1.startsWith(w2) || w2.startsWith(w1);
+      }
     }
     return false;
   }
@@ -2352,8 +2342,10 @@ function getMatchStats(asset, normalizedKeywords) {
   normalizedKeywords.forEach(keyword => {
     let bestScore = 0;
     tags.forEach(tag => {
-      if (tag === keyword) {
-        bestScore = Math.max(bestScore, 3); // Exact tag match
+      if (tag === keyword && keyword.includes(' ')) {
+        bestScore = Math.max(bestScore, 7); // Exact multi-word phrase match (e.g., "air pollution")
+      } else if (tag === keyword) {
+        bestScore = Math.max(bestScore, 5); // Exact single-word match
       } else if (tagMatchesKeyword(tag, keyword)) {
         bestScore = Math.max(bestScore, 1); // Prefix/word match
       }

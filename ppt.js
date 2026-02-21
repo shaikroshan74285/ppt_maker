@@ -128,11 +128,15 @@ function pptTagMatchesKeyword(tag, keyword) {
     if (t === k) return true;
     var tagWords = t.split(/[\s_-]+/);
     var keyWords = k.split(/[\s_-]+/);
-    // Helper: check if two words match (exact or prefix with min 4 chars)
+    // Helper: check if two words match (exact or strict prefix with min 5 chars and 80% length ratio)
     function wordsMatch(w1, w2) {
         if (w1 === w2) return true;
-        if (w1.length >= 4 && w2.length >= 4) {
-            return w1.indexOf(w2) === 0 || w2.indexOf(w1) === 0;
+        if (w1.length >= 5 && w2.length >= 5) {
+            var shorter = Math.min(w1.length, w2.length);
+            var longer = Math.max(w1.length, w2.length);
+            if (shorter / longer >= 0.8) {
+                return w1.indexOf(w2) === 0 || w2.indexOf(w1) === 0;
+            }
         }
         return false;
     }
@@ -363,15 +367,10 @@ document.getElementById('generateBtn').onclick = async function () {
                 var iconKeywords = normalizeIconKeywords(slide.icon_keywords || (slide.keywords || []).slice(0, 3));
                 icons = getIcons(iconKeywords, 4, 'slide-' + i);
 
-                var matchedIcons = filterMatchedIcons(icons, iconKeywords);
-                if (!matchedIcons.length && slide.keywords && slide.keywords.length) {
+                // If getIcons returned no good matches, try with full keywords
+                if (!icons.length && slide.keywords && slide.keywords.length) {
                     var fallbackKeywords = normalizeIconKeywords(slide.keywords);
                     icons = getIcons(fallbackKeywords, 4, 'slide-' + i + '-fallback');
-                    matchedIcons = filterMatchedIcons(icons, fallbackKeywords);
-                }
-
-                if (matchedIcons.length) {
-                    icons = matchedIcons;
                 }
             }
 
