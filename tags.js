@@ -2306,15 +2306,11 @@ function tagMatchesKeyword(tag, keyword) {
   // Split into individual words for whole-word matching
   const tagWords = t.split(/[\s_-]+/).filter(w => w.length > 0);
   const keyWords = k.split(/[\s_-]+/).filter(w => w.length > 0);
-  // Helper: check if two words are a valid match (exact or strict prefix with min 5 chars and 80% length ratio)
+  // Helper: check if two words are a valid match (exact or prefix with min 4 chars)
   function wordsMatch(w1, w2) {
     if (w1 === w2) return true;
-    if (w1.length >= 5 && w2.length >= 5) {
-      const shorter = Math.min(w1.length, w2.length);
-      const longer = Math.max(w1.length, w2.length);
-      if (shorter / longer >= 0.8) {
-        return w1.startsWith(w2) || w2.startsWith(w1);
-      }
+    if (w1.length >= 4 && w2.length >= 4) {
+      return w1.startsWith(w2) || w2.startsWith(w1);
     }
     return false;
   }
@@ -2342,10 +2338,8 @@ function getMatchStats(asset, normalizedKeywords) {
   normalizedKeywords.forEach(keyword => {
     let bestScore = 0;
     tags.forEach(tag => {
-      if (tag === keyword && keyword.includes(' ')) {
-        bestScore = Math.max(bestScore, 7); // Exact multi-word phrase match (e.g., "air pollution")
-      } else if (tag === keyword) {
-        bestScore = Math.max(bestScore, 5); // Exact single-word match
+      if (tag === keyword) {
+        bestScore = Math.max(bestScore, 3); // Exact tag match
       } else if (tagMatchesKeyword(tag, keyword)) {
         bestScore = Math.max(bestScore, 1); // Prefix/word match
       }
@@ -2391,7 +2385,7 @@ function getBackgroundImage(keywords) {
         const stats = getMatchStats(img, normalizedKeywords);
         return { img: img, ratio: stats.ratio, matchedKeywords: stats.matchedKeywords };
       })
-      .filter(item => item.ratio >= 0.5)
+      .filter(item => item.matchedKeywords >= 1)
       .sort((a, b) => {
         if (b.ratio !== a.ratio) return b.ratio - a.ratio;
         return b.matchedKeywords - a.matchedKeywords;
@@ -2435,7 +2429,7 @@ function getIcons(keywords, count = 3, slideId) {
         const stats = getMatchStats(icon, normalizedKeywords);
         return { icon: icon, ratio: stats.ratio, matchedKeywords: stats.matchedKeywords, score: stats.score };
       })
-      .filter(item => item.ratio >= 0.5)
+      .filter(item => item.matchedKeywords >= 1)
       .sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         if (b.ratio !== a.ratio) return b.ratio - a.ratio;

@@ -194,30 +194,15 @@ function extractKeywords(title, items) {
         'conclusion', 'summary', 'point', 'points', 'section', 'content'
     ]);
 
-    // Extract multi-word phrases (bigrams) from the title for precise matching
-    const titleText = (title || '').toLowerCase();
-    const titleTokens = titleText.match(/\b[a-z][a-z0-9]{1,}\b/g) || [];
+    const words = text.match(/\b[a-z][a-z0-9]{1,}\b/g) || [];
     const keywords = [];
     const seen = new Set();
 
-    // Add 2-word phrases from title first (e.g., "environmental pollution", "air pollution")
-    for (let i = 0; i < titleTokens.length - 1; i++) {
-        if (!stopWords.has(titleTokens[i]) && !stopWords.has(titleTokens[i + 1])) {
-            const phrase = titleTokens[i] + ' ' + titleTokens[i + 1];
-            if (!seen.has(phrase)) {
-                keywords.push(phrase);
-                seen.add(phrase);
-            }
-        }
-    }
-
-    // Then add individual words from the full text
-    const words = text.match(/\b[a-z][a-z0-9]{1,}\b/g) || [];
     for (const word of words) {
         if (!stopWords.has(word) && !seen.has(word)) {
             keywords.push(word);
             seen.add(word);
-            if (keywords.length >= 12) break;
+            if (keywords.length >= 10) break;
         }
     }
 
