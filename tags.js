@@ -2315,29 +2315,57 @@ function tagMatchesKeyword(tag, keyword) {
   const t = String(tag || "").toLowerCase().trim();
   const k = String(keyword || "").toLowerCase().trim();
   if (!t || !k) return false;
-  if (t.includes(k) || k.includes(t)) return true;
-
-  const tagWords = t.split(/\s+/);
-  const keyWords = k.split(/\s+/);
-  return keyWords.some(kw => tagWords.some(tw => tw.includes(kw) || kw.includes(tw)));
+  // Exact full match is always valid
+  if (t === k) return true;
+  // Split into individual words for whole-word matching
+  const tagWords = t.split(/[\s_-]+/).filter(w => w.length > 0);
+  const keyWords = k.split(/[\s_-]+/).filter(w => w.length > 0);
+  // Helper: check if two words are a valid match (exact or prefix with min 4 chars)
+  function wordsMatch(w1, w2) {
+    if (w1 === w2) return true;
+    if (w1.length >= 4 && w2.length >= 4) {
+      return w1.startsWith(w2) || w2.startsWith(w1);
+    }
+    return false;
+  }
+  // All keyword words must find a matching tag word
+  const allKeyInTag = keyWords.every(kw =>
+    kw.length < 3 || tagWords.some(tw => wordsMatch(tw, kw))
+  );
+  if (allKeyInTag && keyWords.filter(kw => kw.length >= 3).length > 0) return true;
+  // Or all tag words must find a matching keyword word
+  const allTagInKey = tagWords.every(tw =>
+    tw.length < 3 || keyWords.some(kw => wordsMatch(tw, kw))
+  );
+  if (allTagInKey && tagWords.filter(tw => tw.length >= 3).length > 0) return true;
+  return false;
 }
 
 function getMatchStats(asset, normalizedKeywords) {
   const tags = (asset.tags || []).map(t => String(t).toLowerCase().trim());
   if (!normalizedKeywords.length || !tags.length) {
-    return { ratio: 0, matchedKeywords: 0 };
+    return { ratio: 0, matchedKeywords: 0, score: 0 };
   }
 
   let matchedKeywords = 0;
+  let totalScore = 0;
   normalizedKeywords.forEach(keyword => {
-    if (tags.some(tag => tagMatchesKeyword(tag, keyword))) {
-      matchedKeywords++;
-    }
+    let bestScore = 0;
+    tags.forEach(tag => {
+      if (tag === keyword) {
+        bestScore = Math.max(bestScore, 3); // Exact tag match
+      } else if (tagMatchesKeyword(tag, keyword)) {
+        bestScore = Math.max(bestScore, 1); // Prefix/word match
+      }
+    });
+    if (bestScore > 0) matchedKeywords++;
+    totalScore += bestScore;
   });
 
   return {
     matchedKeywords: matchedKeywords,
-    ratio: matchedKeywords / normalizedKeywords.length
+    ratio: matchedKeywords / normalizedKeywords.length,
+    score: totalScore
   };
 }
 
@@ -2413,10 +2441,11 @@ function getIcons(keywords, count = 3, slideId) {
     const matchedIcons = icons
       .map(icon => {
         const stats = getMatchStats(icon, normalizedKeywords);
-        return { icon: icon, ratio: stats.ratio, matchedKeywords: stats.matchedKeywords };
+        return { icon: icon, ratio: stats.ratio, matchedKeywords: stats.matchedKeywords, score: stats.score };
       })
       .filter(item => item.ratio >= 0.5)
       .sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
         if (b.ratio !== a.ratio) return b.ratio - a.ratio;
         return b.matchedKeywords - a.matchedKeywords;
       });

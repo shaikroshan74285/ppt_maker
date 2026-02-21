@@ -210,9 +210,17 @@ function extractKeywords(title, items) {
 }
 
 function extractIconKeywords(title, items, fallbackKeywords) {
-    const focused = extractKeywords(title, (items || []).slice(0, 2)).slice(0, 3);
+    const titleLower = (title || '').toLowerCase().trim();
+    const focused = extractKeywords(title, (items || []).slice(0, 2)).slice(0, 5);
+
+    // Include the full title as a phrase keyword if it's 2-4 words (helps exact tag matching)
+    const titleWords = titleLower.split(/\s+/).filter(w => w.length > 1);
+    if (titleWords.length >= 2 && titleWords.length <= 4) {
+        focused.unshift(titleLower);
+    }
+
     if (focused.length) return focused;
-    return (fallbackKeywords || []).slice(0, 3);
+    return (fallbackKeywords || []).slice(0, 5);
 }
 
 function hasExplicitDifferenceIntent(title, items) {

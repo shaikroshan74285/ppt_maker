@@ -124,19 +124,44 @@ function pptTagMatchesKeyword(tag, keyword) {
     var t = String(tag || '').toLowerCase().trim();
     var k = String(keyword || '').toLowerCase().trim();
     if (!t || !k) return false;
-    if (t.indexOf(k) !== -1 || k.indexOf(t) !== -1) return true;
-
+    // Exact full match is always valid
+    if (t === k) return true;
     var tagWords = t.split(/[\s_-]+/);
     var keyWords = k.split(/[\s_-]+/);
-    for (var i = 0; i < keyWords.length; i++) {
-        for (var j = 0; j < tagWords.length; j++) {
-            if (!keyWords[i] || !tagWords[j]) continue;
-            if (tagWords[j].indexOf(keyWords[i]) !== -1 || keyWords[i].indexOf(tagWords[j]) !== -1) {
-                return true;
-            }
+    // Helper: check if two words match (exact or prefix with min 4 chars)
+    function wordsMatch(w1, w2) {
+        if (w1 === w2) return true;
+        if (w1.length >= 4 && w2.length >= 4) {
+            return w1.indexOf(w2) === 0 || w2.indexOf(w1) === 0;
         }
+        return false;
     }
-    return false;
+    // All keyword words must find a matching tag word
+    var allKeyInTag = true;
+    var keyCount = 0;
+    for (var i = 0; i < keyWords.length; i++) {
+        if (keyWords[i].length < 3) continue;
+        keyCount++;
+        var found = false;
+        for (var j = 0; j < tagWords.length; j++) {
+            if (wordsMatch(tagWords[j], keyWords[i])) { found = true; break; }
+        }
+        if (!found) { allKeyInTag = false; break; }
+    }
+    if (allKeyInTag && keyCount > 0) return true;
+    // Or all tag words must find a matching keyword word
+    var allTagInKey = true;
+    var tagCount = 0;
+    for (var j = 0; j < tagWords.length; j++) {
+        if (tagWords[j].length < 3) continue;
+        tagCount++;
+        var found = false;
+        for (var i = 0; i < keyWords.length; i++) {
+            if (wordsMatch(tagWords[j], keyWords[i])) { found = true; break; }
+        }
+        if (!found) { allTagInKey = false; break; }
+    }
+    return allTagInKey && tagCount > 0;
 }
 
 function isIconMatched(icon, keywords) {
