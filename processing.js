@@ -189,10 +189,12 @@ function extractKeywords(title, items) {
         'before', 'after', 'above', 'below', 'between', 'under', 'again',
         'further', 'once', 'here', 'there', 'all', 'each', 'few', 'more',
         'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only',
-        'own', 'same', 'so', 'than', 'too', 'very', 'just', 'also'
+        'own', 'same', 'so', 'than', 'too', 'very', 'just', 'also',
+        'slide', 'slides', 'title', 'topic', 'overview', 'introduction',
+        'conclusion', 'summary', 'point', 'points', 'section', 'content'
     ]);
 
-    const words = text.match(/\b[a-z]{4,}\b/g) || [];
+    const words = text.match(/\b[a-z][a-z0-9]{1,}\b/g) || [];
     const keywords = [];
     const seen = new Set();
 
@@ -205,6 +207,12 @@ function extractKeywords(title, items) {
     }
 
     return keywords;
+}
+
+function extractIconKeywords(title, items, fallbackKeywords) {
+    const focused = extractKeywords(title, (items || []).slice(0, 2)).slice(0, 3);
+    if (focused.length) return focused;
+    return (fallbackKeywords || []).slice(0, 3);
 }
 
 function hasExplicitDifferenceIntent(title, items) {
@@ -400,11 +408,13 @@ function processContent(text) {
         const contentType = detectContentType(title, items, i, slidesRaw.length);
         const suggestedTemplate = suggestTemplate(contentType);
         const keywords = extractKeywords(title, items);
+        const iconKeywords = extractIconKeywords(title, items, keywords);
 
         slides.push({
             title: title.substring(0, 120),
             items: items,
             keywords: keywords,
+            icon_keywords: iconKeywords,
             content_type: contentType,
             suggested_template: suggestedTemplate
         });

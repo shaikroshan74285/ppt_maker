@@ -107,6 +107,60 @@ function showStatus(msg, type) {
     }
 }
 
+function normalizeIconKeywords(keywords) {
+    if (!Array.isArray(keywords)) return [];
+    var seen = {};
+    var result = [];
+    for (var i = 0; i < keywords.length; i++) {
+        var k = String(keywords[i] || '').toLowerCase().trim();
+        if (!k || seen[k]) continue;
+        seen[k] = true;
+        result.push(k);
+    }
+    return result;
+}
+
+function pptTagMatchesKeyword(tag, keyword) {
+    var t = String(tag || '').toLowerCase().trim();
+    var k = String(keyword || '').toLowerCase().trim();
+    if (!t || !k) return false;
+    if (t.indexOf(k) !== -1 || k.indexOf(t) !== -1) return true;
+
+    var tagWords = t.split(/[\s_-]+/);
+    var keyWords = k.split(/[\s_-]+/);
+    for (var i = 0; i < keyWords.length; i++) {
+        for (var j = 0; j < tagWords.length; j++) {
+            if (!keyWords[i] || !tagWords[j]) continue;
+            if (tagWords[j].indexOf(keyWords[i]) !== -1 || keyWords[i].indexOf(tagWords[j]) !== -1) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function isIconMatched(icon, keywords) {
+    if (!icon || !icon.tags || !icon.tags.length || !keywords || !keywords.length) return false;
+    for (var i = 0; i < keywords.length; i++) {
+        for (var j = 0; j < icon.tags.length; j++) {
+            if (pptTagMatchesKeyword(icon.tags[j], keywords[i])) return true;
+        }
+    }
+    return false;
+}
+
+function filterMatchedIcons(icons, keywords) {
+    if (!Array.isArray(icons) || !icons.length) return [];
+    if (!keywords || !keywords.length) return icons;
+    var matched = [];
+    for (var i = 0; i < icons.length; i++) {
+        if (isIconMatched(icons[i], keywords)) {
+            matched.push(icons[i]);
+        }
+    }
+    return matched.length ? matched : [];
+}
+
 // ========== ANIMATED BACKGROUND (Blue Gradient + White Arcs) ==========
 (function initBackground() {
     const canvas = document.getElementById('bgCanvas');
@@ -281,7 +335,19 @@ document.getElementById('generateBtn').onclick = async function () {
             }
 
             if (window.getIcons) {
-                icons = getIcons(slide.keywords || [], 4, 'slide-' + i);
+                var iconKeywords = normalizeIconKeywords(slide.icon_keywords || (slide.keywords || []).slice(0, 3));
+                icons = getIcons(iconKeywords, 4, 'slide-' + i);
+
+                var matchedIcons = filterMatchedIcons(icons, iconKeywords);
+                if (!matchedIcons.length && slide.keywords && slide.keywords.length) {
+                    var fallbackKeywords = normalizeIconKeywords(slide.keywords);
+                    icons = getIcons(fallbackKeywords, 4, 'slide-' + i + '-fallback');
+                    matchedIcons = filterMatchedIcons(icons, fallbackKeywords);
+                }
+
+                if (matchedIcons.length) {
+                    icons = matchedIcons;
+                }
             }
 
             template.build(pptx, slide, {
