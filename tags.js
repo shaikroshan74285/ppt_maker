@@ -2340,6 +2340,10 @@ function getMatchStats(asset, normalizedKeywords) {
     tags.forEach(tag => {
       if (tag === keyword) {
         bestScore = Math.max(bestScore, 3); // Exact tag match
+      } else if (keyword.length >= 3 && tag.includes(keyword)) {
+        bestScore = Math.max(bestScore, 2); // Keyword found inside tag (e.g. "pollution" in "air pollution")
+      } else if (tag.length >= 3 && keyword.includes(tag)) {
+        bestScore = Math.max(bestScore, 2); // Tag found inside keyword (e.g. tag "environment" in "environmental")
       } else if (tagMatchesKeyword(tag, keyword)) {
         bestScore = Math.max(bestScore, 1); // Prefix/word match
       }

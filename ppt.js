@@ -304,7 +304,19 @@ function filterMatchedIcons(icons, keywords) {
 // ========== WELCOME ALERT ==========
 window.addEventListener('load', function () {
     setTimeout(function () {
-        console.log('Prabhas PPT Maker ready!');
+        var msg = 'Welcome to Prabhas PPT Maker!' + '\n\n' +
+            'Paste AI-generated content in this format:' + '\n\n' +
+            'Slide 1 - Title' + '\n' +
+            '- Point one' + '\n' +
+            '- Point two' + '\n\n' +
+            'Slide 2 - Content' + '\n' +
+            '- Point one' + '\n' +
+            '- Point two' + '\n\n' +
+            'Supported formats:' + '\n' +
+            'Slide 1: Title' + '\n' +
+            'Slide 1 - Title' + '\n' +
+            '## Slide 1: Title';
+        alert(msg);
     }, 500);
 });
 
